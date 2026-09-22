@@ -75,7 +75,7 @@ Individual-level dataset (1979–2023). Each row corresponds to an individual-ye
 | `Survival` | integer | Binary overwinter survival status to year $t+1$ ($1 = \text{survived}, 0 = \text{died}$) |
 
 ### 2. `season_summary_thresh.csv`
-Annual winter snow conditions derived from daily simulation with SNOWPACK [Crémel et al. 2026](https://doi.org/10.1080/15230430.2026.2627695):
+Annual winter snow conditions derived from daily simulation with SNOWPACK ([Crémel et al. 2026](https://doi.org/10.1080/15230430.2026.2627695)):
 
 | Column | Type | Description |
 | :--- | :--- | :--- |
@@ -93,9 +93,28 @@ Annual winter snow conditions derived from daily simulation with SNOWPACK [Crém
 
 ---
 
+## Statistical modeling framework
+
+All models were developed in a Bayesian framework using [`brms`](https://paul-buerkner.github.io/brms/) and Stan ([`cmdstanr`](https://mc-stan.org/cmdstanr/)):
+
+1. **Survival Models**:
+Individual annual survival is modeled using Bayesian mixed-effects logistic regression.
+   
+2. **Snow Threshold Trends**:
+Long-term temporal trends in snow depth threshold (days exceeding 90 cm and 100 cm) are modeled using beta-binomial regression
+   
+3. **Model selection and validation**:
+Approximate leave-one-out cross-validation (`loo` package) and Pareto-$k$ diagnostic checks ($k < 0.7$).
+Posterior predictive checks with grouped bars, means, standard deviations, and zero proportions.
+Prior sensitivity diagnostics (`priorsense` power-scaling).
+
+---
+
 ## G-Computation mediation pipeline (`Gcomp/`)
 
 To quantify how much of the total effect of winter conditions on survival operates directly versus indirectly through over-winter mass loss, we implemented a causal mediation analysis using **G-computation**.
+
+**Prerequisite:** Before executing the G-computation pipeline, you must compute the survival models from this study as well as the body mass models from [10.17605/OSF.IO/F5M9V](https://doi.org/10.17605/OSF.IO/F5M9V), as the counterfactual simulations rely on their fitted outputs.
 
 The pipeline evaluates **14 demographic groups** defined in `Gcomp/groups_grid.csv`:
 * **Exposures**: Snow cover duration (`days_count`), Median snow density (`median_density`), and Mean snow depth (`avg_snow_depth`).
@@ -120,23 +139,6 @@ Each group simulates counterfactual outcomes across 30 exposure values and 1,000
    ```
 
 The summary table is saved directly in `Gcomp/gcomp_global_summary.rds` and read by `11_gcomp_analysis.qmd` to produce Figure 5 and summary tables.
-
----
-
-## Statistical modeling framework
-
-All models were developed in a Bayesian framework using [`brms`](https://paul-buerkner.github.io/brms/) and Stan ([`cmdstanr`](https://mc-stan.org/cmdstanr/)):
-
-1. **Survival Models**:
-Individual annual survival is modeled using Bayesian mixed-effects logistic regression.
-   
-2. **Snow Threshold Trends**:
-Long-term temporal trends in snow depth threshold (days exceeding 90 cm and 100 cm) are modeled using beta-binomial regression
-   
-3. **Model selection and validation**:
-Approximate leave-one-out cross-validation (`loo` package) and Pareto-$k$ diagnostic checks ($k < 0.7$).
-Posterior predictive checks with grouped bars, means, standard deviations, and zero proportions.
-Prior sensitivity diagnostics (`priorsense` power-scaling).
 
 ---
 
