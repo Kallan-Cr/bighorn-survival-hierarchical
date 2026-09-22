@@ -1,0 +1,149 @@
+# 12. Multi-Panel Figures & Export
+
+```{r}
+#| label: export-figures
+#| echo: true
+#| eval: true
+
+# Figure 1: Lamb survival vs average snow depth and snow cover duration
+
+common_size_scale_lamb <- scale_size_continuous(
+  name = "Sample size (N)",
+  limits = c(1, 50),
+  breaks = c(5, 10, 20, 30, 50),
+  range = c(1.5, 7)
+)
+
+lamb_depth_styled <- lamb_depth + common_size_scale_lamb + guides(size = "none")
+lamb_days_styled  <- lamb_days  + common_size_scale_lamb 
+
+final_plot_lamb <- lamb_depth_styled + lamb_days_styled +
+  plot_layout(guides = "collect") +
+  plot_annotation(tag_levels = "A") &
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.25)) &
+  theme(
+    legend.position  = "bottom",
+    legend.direction = "horizontal",
+    legend.box.just  = "center",
+    legend.margin    = margin(t = 10),
+    axis.title       = element_text(size = 18), 
+    axis.text        = element_text(size = 18),
+    legend.text      = element_text(size = 16),      
+    legend.title     = element_text(size = 16),      
+    plot.tag         = element_text(size = 22, face = "bold")
+  )
+
+ggsave(
+  "Figure1_bis.pdf", 
+  device = cairo_pdf,
+  plot   = final_plot_lamb,
+  width  = 12,              
+  height = 8
+)
+
+# Figure 2: Survival vs snow thresholds (Lambs, Females, Males)
+common_size_scale <- scale_size_continuous(
+  name = "Sample size (N)",
+  limits = c(1, 1000),
+  breaks = c(50, 200, 500, 1000),
+  range = c(1.5, 7)
+)
+
+p_sex_days90_styled <- p_sex_days90 + common_size_scale + guides(size = "none")
+p_fem_thresh_styled <- p_fem_thresh + common_size_scale 
+p_male_thresh_styled <- p_male_thresh + common_size_scale + guides(size = "none")
+
+final_plot_thresh <- p_sex_days90_styled + p_fem_thresh_styled + p_male_thresh_styled +
+  plot_layout(guides = "collect") +
+  plot_annotation(tag_levels = "A") &
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.25)) &
+  theme(
+    legend.position  = "bottom",
+    legend.direction = "horizontal",
+    legend.box.just  = "center",
+    legend.margin    = margin(t = 10),
+    axis.title       = element_text(size = 20), 
+    axis.text        = element_text(size = 20),
+    legend.text      = element_text(size = 18),      
+    legend.title     = element_text(size = 18),      
+    plot.tag         = element_text(size = 22, face = "bold")
+  )
+
+ggsave(
+  "Figure2.pdf", 
+  device = cairo_pdf,
+  plot   = final_plot_thresh,
+  width  = 18,              
+  height = 8
+)
+
+# Figure 3: Trends in extreme snow days (90 cm & 100 cm)
+final_plot_trend <- (prob_90 + plot_ce90) / (prob_100 + plot_ce100) +
+  plot_annotation(tag_levels = "A") &
+  theme(
+    legend.position  = "bottom",
+    legend.direction = "horizontal",
+    legend.box.just  = "center",
+    legend.margin    = margin(t = 10),
+    axis.title       = element_text(size = 20), 
+    axis.text        = element_text(size = 20),
+    legend.text      = element_text(size = 18),      
+    legend.title     = element_text(size = 18),        
+    plot.tag         = element_text(size = 22, face = "bold")
+  )
+
+ggsave(
+  "Figure3.pdf", 
+  device = cairo_pdf,
+  plot   = final_plot_trend,
+  width  = 15,              
+  height = 12
+)
+
+
+# Figure 4: Survival trends across demographic classes
+
+common_size_scale_trend <- scale_size_continuous(
+  name = "Sample size (N)",
+  limits = c(1, 200),
+  breaks = c(10, 20, 50, 100, 200),
+  range = c(1.5, 7)
+)
+
+lamb_trend_styled   <- lamb_trend   + common_size_scale_trend + guides(size = "none")
+female_trend_styled <- female_trend + common_size_scale_trend 
+male_trend_styled   <- male_trend   + common_size_scale_trend + guides(size = "none")
+
+final_plot_surv_trend <- lamb_trend_styled + female_trend_styled + male_trend_styled +
+  plot_layout(guides = "collect") +
+  plot_annotation(tag_levels = "A") &
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.25)) &
+  theme(
+    legend.position  = "bottom",
+    legend.direction = "horizontal",
+    legend.box.just  = "center",
+    legend.margin    = margin(t = 10),
+    axis.title       = element_text(size = 20), 
+    axis.text        = element_text(size = 20),
+    legend.text      = element_text(size = 18),      
+    legend.title     = element_text(size = 18),        
+    plot.tag         = element_text(size = 22, face = "bold")
+  )
+
+ggsave(
+  "Figure4_bis.pdf", 
+  device = cairo_pdf,
+  plot   = final_plot_surv_trend,
+  width  = 18,              
+  height = 8
+)
+
+# Figure 5: Causal mediation / G-computation scenario differences
+
+ggsave(
+  "Figure5.pdf", 
+  plot   = gcomp_graph,
+  width  = 15,              
+  height = 12
+)
+```

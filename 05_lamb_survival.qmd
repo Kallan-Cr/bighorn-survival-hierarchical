@@ -1,0 +1,141 @@
+# 5. Analysis: Lambs
+
+## 5.1 Survival is correlated with environmental variables
+
+```{r}
+#| label: lamb-models-calc
+#| echo: true
+#| eval: true
+
+# Base model: main effects of snow, body mass, and density with sex interactions
+lambs_survival_base <- brm(
+  Survival ~ Sex * (avg_snow_depth + wtd114 + days_count + median_density + pop_den) + (1 | Yr), 
+  data = Data_lamb_scaled, 
+  family = bernoulli(link = "logit"),  
+  cores = 4, chains = 4, warmup = 4000, iter = 10000, 
+  threads = threading(2), backend = "cmdstanr", seed = 459300324
+)
+```
+
+## 5.2 Survival is correlated with environmental variables in interaction with population density
+
+```{r}
+#| label: lamb-models-calc-dens
+#| echo: true
+#| eval: true
+
+# Alternative model: snow effects modulated by population density
+lambs_survival_pop <- brm(
+  Survival ~ wtd114 + Sex * (avg_snow_depth + days_count + median_density) * pop_den + (1 | Yr), 
+  data = Data_lamb_scaled, 
+  family = bernoulli(link = "logit"),  
+  cores = 4, chains = 4, warmup = 4000, iter = 10000, 
+  threads = threading(2), backend = "cmdstanr", seed = 647133741
+)
+```
+
+## 5.3 Selection & Results
+
+```{r}
+#| label: lamb-results
+#| echo: true
+#| eval: true
+
+# Model comparison via LOO-CV
+loo_lamb_base <- loo(lambs_survival_base)
+loo_lamb_pop  <- loo(lambs_survival_pop)
+
+loo_compare(loo_lamb_base, loo_lamb_pop)
+
+# Posterior predictive check
+pp_check(lambs_survival_base, ndraws = 100, type = "bars")
+
+# Prior sensitivity analysis & probability of direction
+lamb_power_analysis <- powerscale_sensitivity(lambs_survival_base)
+p_direction(lambs_survival_base)
+
+# Model summary and export to Word table
+ft_lamb <- flextable(extract_brms_summary(lambs_survival_base, "Lamb")) |> autofit()
+ft_lamb
+
+doc <- read_docx()       
+doc <- body_add_flextable(doc, ft_lamb)   
+print(doc, target = "result_model_lamb.docx")
+```
+
+## 5.4 Graphs
+
+```{r}
+#| label: lamb-plots
+#| echo: true
+#| eval: true
+
+# --- A. Conditional effect of average snow depth by sex ---
+ce_snow <- conditional_effects(lambs_survival_base, effects = "avg_snow_depth:Sex", resp = "Survival")
+
+plot_lamb_depth <- ce_snow$`avg_snow_depth:Sex` |>
+  mutate(
+    avg_snow_depth = avg_snow_depth * sd(Data_lambs_uns$avg_snow_depth, na.rm = TRUE) +
+      mean(Data_lambs_uns$avg_snow_depth, na.rm = TRUE)
+  )
+
+# Calculate empirical mean survival rates for display
+data_mean_lamb_depth <- Data_lambs_uns |>
+  group_by(Sex, avg_snow_depth) |>
+  summarise(
+    survival_rate = mean(Survival, na.rm = TRUE), 
+    n = n(),                                      
+    .groups = "drop"
+  )
+
+lamb_depth <- ggplot(plot_lamb_depth, aes(x = avg_snow_depth, y = estimate__, color = Sex, fill = Sex)) +
+  geom_point(
+    data = data_mean_lamb_depth, 
+    aes(x = avg_snow_depth, y = survival_rate, color = Sex, size = n), 
+    alpha = 0.2
+  ) +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__), alpha = 0.2, color = NA) +
+  geom_line(linewidth = 1.2, lineend = "round") +
+  scale_color_manual(values = c("Female" = "#7a2554", "Male" = "#dd9a0a")) +
+  scale_fill_manual(values = c("Female" = "#7a2554", "Male" = "#dd9a0a")) +
+  labs(
+    x = "Average snow depth (cm)", 
+    y = "Survival probability",
+    color = "Sex",
+    fill = "Sex"
+  ) +
+  theme_pubr() +
+  theme(legend.position = "right")
+
+lamb_depth
+
+# --- B. Conditional effect of snow cover duration ---
+ce_days <- conditional_effects(lambs_survival_base, effects = "days_count", resp = "Survival")
+
+plot_lamb_days <- ce_days$days_count |>
+  mutate(
+    days_count = days_count * sd(Data_lambs_uns$days_count, na.rm = TRUE) +
+      mean(Data_lambs_uns$days_count, na.rm = TRUE)
+  )
+
+data_mean_lamb_days <- Data_lambs_uns |>
+  group_by(days_count) |>
+  summarise(
+    survival_rate = mean(Survival, na.rm = TRUE), 
+    n = n(),                                      
+    .groups = "drop"
+  )
+
+lamb_days <- ggplot(plot_lamb_days, aes(x = days_count, y = estimate__)) +
+  geom_point(
+    data = data_mean_lamb_days, 
+    aes(x = days_count, y = survival_rate, size = n), 
+    alpha = 0.2
+  ) +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__), fill = "#4575b4", alpha = 0.2) +
+  geom_line(color = "#4575b4", linewidth = 1.5, lineend = "round") +
+  labs(x = "Snow cover duration (days)", y = "Survival probability") +
+  theme_pubr()
+
+lamb_days
+```

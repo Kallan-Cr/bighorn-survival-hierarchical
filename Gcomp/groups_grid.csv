@@ -1,0 +1,15 @@
+group_id,exposure,exposure_col,sex,age_class,age_select,target_age_scaled,mass_model,surv_model,has_repro
+1,Duration,days_count,Female,Yearling,NA,-1.239103,Mass_loss_lamb.rds,Survival_female_base.rds,FALSE
+2,Duration,days_count,Female,prime,2,-0.675716,Mass_loss_female_repro_int.rds,Survival_female_base.rds,TRUE
+3,Duration,days_count,Female,senescent,8,1.014445,Mass_loss_female_repro_int.rds,Survival_female_base.rds,TRUE
+4,Duration,days_count,Male,Yearling,NA,-0.930602,Mass_loss_lamb.rds,Survival_male_base.rds,FALSE
+5,Duration,days_count,Male,prime,2,-0.017700,Mass_loss_male_pop.rds,Survival_male_base.rds,FALSE
+6,Duration,days_count,Male,senescent,8,2.721006,Mass_loss_male_pop.rds,Survival_male_base.rds,FALSE
+7,MedianDensity,median_density,Male,prime,2,-0.017700,Mass_loss_male_pop.rds,Survival_male_base.rds,FALSE
+8,MedianDensity,median_density,Male,senescent,8,2.721006,Mass_loss_male_pop.rds,Survival_male_base.rds,FALSE
+9,Snowdepth,avg_snow_depth,Female,Yearling,NA,-1.239103,Mass_loss_lamb.rds,Survival_female_base.rds,FALSE
+10,Snowdepth,avg_snow_depth,Female,prime,2,-0.675716,Mass_loss_female_repro_int.rds,Survival_female_base.rds,TRUE
+11,Snowdepth,avg_snow_depth,Female,senescent,8,1.014445,Mass_loss_female_repro_int.rds,Survival_female_base.rds,TRUE
+12,Snowdepth,avg_snow_depth,Male,Yearling,NA,-0.930602,Mass_loss_lamb.rds,Survival_male_base.rds,FALSE
+13,Snowdepth,avg_snow_depth,Male,prime,2,-0.017700,Mass_loss_male_pop.rds,Survival_male_base.rds,FALSE
+14,Snowdepth,avg_snow_depth,Male,senescent,8,2.721006,Mass_loss_male_pop.rds,Survival_male_base.rds,FALSE

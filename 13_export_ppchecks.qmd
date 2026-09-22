@@ -1,0 +1,110 @@
+# 13. Export Posterior Predictive Checks
+
+```{r}
+#| label: export-ppchecks
+#| echo: true
+#| eval: false
+
+# Lamb Base Model
+pp_check(lambs_survival_base, ndraws = 100, type = "bars") + theme_pubr()
+ggsave(
+  "lambs_survival_base_1.pdf",
+  plot   = last_plot(),
+  device = cairo_pdf,
+  width  = 8.5, height = 7, units = "cm"
+)
+
+# Female Base Model
+pp_check(Survival_female_base, ndraws = 100, type = "bars") + theme_pubr()
+ggsave(
+  "Survival_female_base_1.pdf",
+  plot   = last_plot(),
+  device = cairo_pdf,
+  width  = 8.5, height = 7, units = "cm"
+)
+
+# Male Base Model
+pp_check(Survival_male_base, ndraws = 100, type = "bars") + theme_pubr()
+ggsave(
+  "Survival_male_base.pdf",
+  plot   = last_plot(),
+  device = cairo_pdf,
+  width  = 8.5, height = 7, units = "cm"
+)
+
+# Threshold Models (days_gt_XX)
+pp_check(models_lamb_days$days_gt_90, type = "bars", ndraws = 100) + theme_pubr()
+ggsave(
+  "models_lamb_days_gt_90.pdf",
+  plot   = last_plot(),
+  device = cairo_pdf,
+  width  = 8.5, height = 7, units = "cm"
+)
+
+pp_check(models_female_days$days_gt_90, type = "bars", ndraws = 100) + theme_pubr()
+ggsave(
+  "models_female_days_gt_90.pdf",
+  plot   = last_plot(),
+  device = cairo_pdf,
+  width  = 8.5, height = 7, units = "cm"
+)
+
+pp_check(models_male_days$days_gt_100, type = "bars", ndraws = 100) + theme_pubr()
+ggsave(
+  "models_male_days_gt_100.pdf",
+  plot   = last_plot(),
+  device = cairo_pdf,
+  width  = 8.5, height = 7, units = "cm"
+)
+
+# beta_90 (4 diagnostic checks)
+pp_check(beta_90, type = "stat", stat = "mean") + theme_pubr() + xlab("Days ≥ 90 cm")
+ggsave("beta_90_1.pdf", plot = last_plot(), device = cairo_pdf, width = 8.5, height = 7, units = "cm")
+
+pp_check(beta_90, type = "stat", stat = "sd") + theme_pubr() + xlab("Days ≥ 90 cm")
+ggsave("beta_90_2.pdf", plot = last_plot(), device = cairo_pdf, width = 8.5, height = 7, units = "cm")
+
+pp_check(beta_90, type = "stat", stat = function(y) mean(y == 0), binwidth = 0.022) + theme_pubr() + xlab("Proportion of 0")
+ggsave("beta_90_3.pdf", plot = last_plot(), device = cairo_pdf, width = 8.5, height = 7, units = "cm")
+
+pp_check(beta_90, type = "ecdf_overlay", ndraws = 100) + theme_pubr() + xlab("Days ≥ 90 cm")
+ggsave("beta_90_4.pdf", plot = last_plot(), device = cairo_pdf, width = 8.5, height = 7, units = "cm")
+
+# beta_100 (4 diagnostic checks)
+pp_check(beta_100, type = "stat", stat = "mean") + theme_pubr() + xlab("Days ≥ 100 cm")
+ggsave("beta_100_1.pdf", plot = last_plot(), device = cairo_pdf, width = 8.5, height = 7, units = "cm")
+
+pp_check(beta_100, type = "stat", stat = "sd") + theme_pubr() + xlab("Days ≥ 100 cm")
+ggsave("beta_100_2.pdf", plot = last_plot(), device = cairo_pdf, width = 8.5, height = 7, units = "cm")
+
+pp_check(beta_100, type = "stat", stat = function(y) mean(y == 0), binwidth = 0.022) + theme_pubr() + xlab("Proportion of 0")
+ggsave("beta_100_3.pdf", plot = last_plot(), device = cairo_pdf, width = 8.5, height = 7, units = "cm")
+
+pp_check(beta_100, type = "ecdf_overlay", ndraws = 50) + theme_pubr() + xlab("Days ≥ 100 cm")
+ggsave("beta_100_4.pdf", plot = last_plot(), device = cairo_pdf, width = 8.5, height = 7, units = "cm")
+
+#  Survival Trend Models
+pp_check(Survival_lamb_trend, ndraws = 100, type = "bars") + theme_pubr()
+ggsave("Survival_lamb_trend_1.pdf", plot = last_plot(), device = cairo_pdf, width = 8.5, height = 7, units = "cm")
+
+pp_check(Survival_lamb_trend, type = "bars_grouped", group = "Year_trend", ndraws = 100) +
+  theme_pubr() + xlab("Year since 1979") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+ggsave("Survival_lamb_trend_2.pdf", plot = last_plot(), device = cairo_pdf, width = 20, height = 20, units = "cm")
+
+pp_check(Survival_female_trend, ndraws = 100, type = "bars") + theme_pubr()
+ggsave("Survival_female_trend_1.pdf", plot = last_plot(), device = cairo_pdf, width = 8.5, height = 7, units = "cm")
+
+pp_check(Survival_female_trend, type = "bars_grouped", group = "Year_trend", ndraws = 100) +
+  theme_pubr() + xlab("Year since 1979") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+ggsave("Survival_female_trend_2.pdf", plot = last_plot(), device = cairo_pdf, width = 20, height = 20, units = "cm")
+
+pp_check(Survival_male_trend, ndraws = 100, type = "bars") + theme_pubr()
+ggsave("Survival_male_trend_1.pdf", plot = last_plot(), device = cairo_pdf, width = 8.5, height = 7, units = "cm")
+
+pp_check(Survival_male_trend, type = "bars_grouped", group = "Year_trend", ndraws = 100) +
+  theme_pubr() + xlab("Year since 1979") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+ggsave("Survival_male_trend_2.pdf", plot = last_plot(), device = cairo_pdf, width = 20, height = 20, units = "cm")
+```

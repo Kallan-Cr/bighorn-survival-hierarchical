@@ -1,0 +1,331 @@
+# 8. Analysis: Snow Depth Thresholds
+
+## 8.1 Lambs
+
+```{r}
+#| label: thresh-lamb-calc
+#| echo: true
+#| eval: true
+
+# Snow threshold variables to test (10 cm to 100 cm increments)
+days_vars <- paste0("days_gt_", seq(10, 100, 10))
+
+# Prepare lamb datasets for threshold modeling
+d_lamb <- Data_lamb_scaled |>
+  mutate(Sex = factor(Sex), Yr = factor(Yr)) |>
+  select(Survival, Sex, wtd114, pop_den, median_density, Yr, days_count, all_of(days_vars)) |>
+  drop_na()
+
+d_lamb_uns <- Data_lambs_uns |>
+  mutate(Sex = factor(Sex), Yr = factor(Yr)) |>
+  select(Survival, Sex, wtd114, pop_den, median_density, Yr, days_count, all_of(days_vars)) |>
+  drop_na()
+
+# Fit threshold models across each snow depth cutoff
+fit_lamb_days_model <- function(day_var) {
+  f <- as.formula(
+    paste0(
+      "Survival ~ Sex * (wtd114 + median_density + pop_den) + ", day_var, " + ",
+      "Sex:", day_var, " + (1 | Yr)"
+    )
+  )
+
+  brm(
+    formula = bf(f),
+    data = d_lamb,
+    family = bernoulli(link = "logit"),
+    chains = 4, iter = 10000, warmup = 4000, cores = 4,
+    seed = 123, refresh = 0, backend = "cmdstanr", threads = threading(2)
+  )
+}
+
+models_lamb_days <- days_vars |>
+  purrr::set_names() |>
+  purrr::map(fit_lamb_days_model)
+```
+
+```{r}
+#| label: thresh-lamb-results
+#| echo: true
+#| eval: true
+
+# Compare threshold models via LOO-CV
+loo_table <- purrr::imap_dfr(models_lamb_days, \(mod, nm) {
+  est <- loo(mod)$estimates
+  tibble(
+    model = nm,
+    elpd_loo = est["elpd_loo", "Estimate"],
+    elpd_se  = est["elpd_loo", "SE"]
+  )
+}) |>
+  arrange(desc(elpd_loo))
+
+# Diagnostics for best threshold model (90 cm)
+pp_check(models_lamb_days$days_gt_90, type = "bars", ndraws = 100) + theme_pubr()
+lamb_thresh_powerscale <- powerscale_sensitivity(models_lamb_days$days_gt_90)
+p_direction(models_lamb_days$days_gt_90)
+
+# Export summary table to Word
+ft_lamb_thresh <- flextable(extract_brms_summary(models_lamb_days$days_gt_90, "Lamb")) |> autofit()
+doc <- read_docx()       
+doc <- body_add_flextable(doc, ft_lamb_thresh)   
+print(doc, target = "result_model_lamb_thresh.docx")
+```
+
+```{r}
+#| label: thresh-lamb-plots
+#| echo: true
+#| eval: true
+
+# Plot marginal effect of days >= 90 cm on lamb survival
+data_mean_lamb_thresh <- d_lamb_uns |>
+  group_by(Sex, days_gt_90) |>
+  summarise(
+    survival_rate = mean(Survival, na.rm = TRUE), 
+    n = n(),                                      
+    .groups = "drop"
+  )
+
+
+ce_sex_days90 <- conditional_effects(
+  models_lamb_days$days_gt_90,
+  effects = "days_gt_90:Sex"
+)
+
+plot_sex_days90 <- ce_sex_days90$`days_gt_90:Sex` |>
+  mutate(days_gt_90 = days_gt_90 * sd(Data_lambs_uns$days_gt_90) + mean(Data_lambs_uns$days_gt_90))
+
+p_sex_days90 <- ggplot() +
+  geom_ribbon(
+    data = plot_sex_days90, 
+    aes(x = days_gt_90, ymin = lower__, ymax = upper__, fill = Sex), 
+    alpha = 0.2
+  ) +
+  geom_line(
+    data = plot_sex_days90, 
+    aes(x = days_gt_90, y = estimate__, color = Sex), 
+    linewidth = 1.2
+  ) +
+  geom_point(
+    data = data_mean_lamb_thresh, 
+    aes(x = days_gt_90, y = survival_rate, color = Sex, size = n), 
+    alpha = 0.2
+  ) +
+  scale_color_manual(values = c("Female" = "#7a2554", "Male" = "#dd9a0a")) +
+  scale_fill_manual(values = c("Female" = "#7a2554", "Male" = "#dd9a0a")) +
+  scale_size_continuous(range = c(2, 7), name = "Sample size (N)") +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.25)) +
+  labs(
+    x = "Days ≥ 90 cm", 
+    y = "Survival probability", 
+    color = "Sex", 
+    fill = "Sex"
+  ) +
+  theme_pubr()
+
+p_sex_days90
+```
+
+## 8.2 Females
+
+```{r}
+#| label: thresh-fem-calc
+#| echo: true
+#| eval: true
+
+# Prepare female datasets for threshold modeling
+d_fem <- Data_female_scaled |>
+  mutate(Yr = factor(Yr)) |>
+  select(Survival, Age, wtd114, pop_den, median_density, Yr, all_of(days_vars)) |>
+  drop_na()
+
+d_fem_uns <- Data_females_uns |>
+  mutate(Yr = factor(Yr)) |>
+  select(Survival, Age, wtd114, pop_den, median_density, Yr, all_of(days_vars)) |>
+  drop_na()
+
+# Fit threshold models across each snow depth cutoff
+fit_female_days_model <- function(day_var) {
+  f <- as.formula(
+    paste0(
+      "Survival ~ ns(Age, 3) + wtd114 + pop_den + median_density + ", day_var, " + ",
+      "(1 | Yr)"
+    )
+  )
+
+  brm(
+    formula = bf(f),
+    data = d_fem,
+    family = bernoulli(link = "logit"),
+    chains = 4, iter = 10000, warmup = 4000, cores = 4,
+    seed = 123, refresh = 0,
+    backend = "cmdstanr", threads = threading(2)
+  )
+}
+
+models_female_days <- days_vars |>
+  purrr::set_names() |>
+  purrr::map(fit_female_days_model)
+```
+
+```{r}
+#| label: thresh-fem-results
+#| echo: true
+#| eval: true
+
+# Compare threshold models via LOO-CV
+loo_table_fem <- purrr::imap_dfr(models_female_days, \(mod, nm) {
+  est <- loo(mod)$estimates
+  tibble(
+    model = nm,
+    elpd_loo = est["elpd_loo", "Estimate"],
+    elpd_se  = est["elpd_loo", "SE"]
+  )
+}) |>
+  arrange(desc(elpd_loo))
+
+# Diagnostics for best threshold model (90 cm)
+pp_check(models_female_days$days_gt_90, type = "bars", ndraws = 100) + theme_pubr()
+female_thresh_powerscale <- powerscale_sensitivity(models_female_days$days_gt_90)
+p_direction(models_female_days$days_gt_90)
+
+# Export summary table to Word
+ft_female_thresh <- flextable(extract_brms_summary(models_female_days$days_gt_90, "Female")) |> autofit()
+doc <- read_docx()       
+doc <- body_add_flextable(doc, ft_female_thresh)   
+print(doc, target = "result_model_female_thresh.docx")
+```
+
+```{r}
+#| label: thresh-fem-plots
+#| echo: true
+#| eval: true
+
+# Plot marginal effect of days >= 90 cm on female survival
+data_mean_female_thresh <- d_fem_uns |>
+  group_by(days_gt_90) |>
+  summarise(
+    survival_rate = mean(Survival, na.rm = TRUE), 
+    n = n(),                                      
+    .groups = "drop"
+  )
+
+ce_fem_thresh <- conditional_effects(models_female_days$days_gt_90, effects = "days_gt_90")
+plot_fem_thresh <- ce_fem_thresh$days_gt_90 |>
+  mutate(days_gt_90 = days_gt_90 * sd(Data_females_uns$days_gt_90) + mean(Data_females_uns$days_gt_90))
+
+p_fem_thresh <- ggplot(plot_fem_thresh, aes(x = days_gt_90, y = estimate__)) +
+  geom_point(
+    data = data_mean_female_thresh, 
+    aes(x = days_gt_90, y = survival_rate, size = n), color = "#5c5f5d", 
+    alpha = 0.2
+  ) +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__), fill = "#4575b4", alpha = 0.2) +
+  geom_line(color = "#4575b4", linewidth = 1.2) +
+  labs(x = "Days ≥ 90 cm", y = "Survival probability") +
+  theme_pubr()
+
+p_fem_thresh
+```
+
+## 8.3 Males
+
+```{r}
+#| label: thresh-male-calc
+#| echo: true
+#| eval: true
+
+# Prepare male datasets for threshold modeling
+d_male <- Data_male_scaled |>
+  mutate(Yr = factor(Yr)) |>
+  select(Survival, Age, wtd114, pop_den, median_density, Yr, all_of(days_vars)) |>
+  drop_na()
+
+d_male_uns <- Data_males_uns |>
+  mutate(Yr = factor(Yr)) |>
+  select(Survival, Age, wtd114, pop_den, median_density, Yr, all_of(days_vars)) |>
+  drop_na()
+
+# Fit threshold models across each snow depth cutoff
+fit_male_days_model <- function(day_var) {
+  f <- as.formula(
+    paste0(
+      "Survival ~ ns(Age, 3) + wtd114 + pop_den + median_density + ", day_var, " + ",
+      "(1 | Yr)"
+    )
+  )
+
+  brm(
+    formula = bf(f),
+    data = d_male,
+    family = bernoulli(link = "logit"),
+    chains = 4, iter = 10000, warmup = 4000, cores = 4,
+    seed = 123, refresh = 0,
+    backend = "cmdstanr", threads = threading(2)
+  )
+}
+
+models_male_days <- days_vars |>
+  purrr::set_names() |>
+  purrr::map(fit_male_days_model)
+```
+
+```{r}
+#| label: thresh-male-results
+#| echo: true
+#| eval: true
+
+# Compare threshold models via LOO-CV
+loo_table_male <- purrr::imap_dfr(models_male_days, \(mod, nm) {
+  est <- loo(mod)$estimates
+  tibble(
+    model = nm,
+    elpd_loo = est["elpd_loo", "Estimate"],
+    elpd_se  = est["elpd_loo", "SE"]
+  )
+}) |>
+  arrange(desc(elpd_loo))
+
+# Diagnostics for best threshold model (100 cm)
+pp_check(models_male_days$days_gt_100, type = "bars", ndraws = 100) + theme_pubr()
+male_thresh_powerscale <- powerscale_sensitivity(models_male_days$days_gt_100)
+p_direction(models_male_days$days_gt_100)
+
+# Export summary table to Word
+ft_male_thresh <- flextable(extract_brms_summary(models_male_days$days_gt_100, "Male")) |> autofit()
+doc <- read_docx()       
+doc <- body_add_flextable(doc, ft_male_thresh)   
+print(doc, target = "result_model_male_thresh.docx")
+```
+
+```{r}
+#| label: thresh-male-plots
+#| echo: true
+#| eval: true
+
+# Plot marginal effect of days >= 100 cm on male survival
+data_mean_male_thresh<- d_male_uns |>
+  group_by(days_gt_100) |>
+  summarise(
+    survival_rate = mean(Survival, na.rm = TRUE), 
+    n = n(),                                      
+    .groups = "drop"
+  )
+
+ce_male_thresh <- conditional_effects(models_male_days$days_gt_100, effects = "days_gt_100")
+plot_male_thresh <- ce_male_thresh$days_gt_100 |>
+  mutate(days_gt_100 = days_gt_100 * sd(Data_males_uns$days_gt_100) + mean(Data_males_uns$days_gt_100))
+
+p_male_thresh <- ggplot(plot_male_thresh, aes(x = days_gt_100, y = estimate__)) +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__), fill = "#4575b4", alpha = 0.2) +
+  geom_line(color = "#4575b4", linewidth = 1.2) +
+  geom_point(
+    data = data_mean_male_thresh, 
+    aes(x = days_gt_100, y = survival_rate, size = n), color = "#5c5f5d", 
+    alpha = 0.2
+  ) +
+  labs(x = "Days ≥ 100 cm", y = "Survival probability") +
+  theme_pubr()
+
+p_male_thresh
+```

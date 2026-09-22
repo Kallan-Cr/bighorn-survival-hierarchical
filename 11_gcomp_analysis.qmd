@@ -1,0 +1,64 @@
+# 11. G-Computation Analysis
+
+## 11.1 Scenario Differences in Survival
+
+```{r}
+#| label: gcomp-analysis
+#| echo: true
+#| eval: true
+
+
+# Load and format G-computation scenario differences
+gcomp_global_summary <- readRDS("Gcomp/gcomp_global_summary.rds")
+
+gcomp_global_summary_graph <- gcomp_global_summary |>
+  mutate(
+    scenario_short = case_when(
+      str_detect(Scenario, "Direct")   ~ "Direct",
+      str_detect(Scenario, "Indirect") ~ "Indirect",
+      str_detect(Scenario, "Total")    ~ "Total"
+    ),
+    exposure = case_when(
+      exposure %in% c("DaysCount", "Duration") ~ "Snow cover duration",
+      exposure == "MedianDensity"              ~ "Snow median density",
+      exposure == "Snowdepth"                  ~ "Snow depth",
+      TRUE                                     ~ exposure
+    ),
+    age = case_when(
+      age == "prime"                        ~ "Prime age",
+      age %in% c("senescent") ~ "Senescent",
+      TRUE                                  ~ age
+    )
+  )
+
+gcomp_graph <- ggplot(gcomp_global_summary_graph, aes(x = scenario_short, y = diff_abs, fill = sex)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "grey40") +
+  facet_grid(age ~ exposure) +
+  scale_y_continuous(
+    limits = c(-0.16, 0.12),
+    breaks = seq(-0.15, 0.10, by = 0.05),
+    labels = c("-0.15", "-0.10", "-0.05", "0.00", "0.05", "0.10")
+  ) +
+  scale_fill_manual(values = c("Female" = "#7a2554", "Male" = "#dd9a0a")) +
+  labs(
+    x    = "Scenario",
+    y    = "Absolute difference in survival probability",
+    fill = "Sex"
+  ) +
+  theme_pubr(base_size = 18) +
+  theme(
+    strip.background = element_rect(fill = "grey90"),
+    strip.text       = element_text(face = "bold"),
+    axis.text.x      = element_text(angle = 30, hjust = 1),
+    panel.grid.minor = element_blank()
+  )
+
+gcomp_graph
+
+# Summary table export
+gcomp_table <- flextable(gcomp_global_summary) |> autofit()
+doc <- read_docx()       
+doc <- body_add_flextable(doc, gcomp_table)   
+print(doc, target = "result_gcomp.docx")
+```

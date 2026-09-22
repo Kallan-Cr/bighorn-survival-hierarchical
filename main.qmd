@@ -1,0 +1,24 @@
+---
+title: "Bighorn sheep survival in relation to snow conditions and temporal trends"
+format:
+  html:
+    theme: flatly        
+    toc: true
+    toc-location: left
+    toc-depth: 3
+    number-sections: false
+    embed-resources: true 
+    code-fold: false      
+    fig-align: center
+    fig-cap-location: bottom
+editor: visual
+execute:
+  cache: true
+  freeze: auto
+  warning: false
+  message: false
+editor_options: 
+  chunk_output_type: console
+---
+
+{{< include 01_setup.qmd >}} {{< include 02_custom_functions.qmd >}} {{< include 03_data_import.qmd >}} {{< include 04_prelim_age_models.qmd >}} {{< include 05_lamb_survival.qmd >}} {{< include 06_female_survival.qmd >}} {{< include 07_male_survival.qmd >}} {{< include 08_snow_thresholds.qmd >}} {{< include 09_threshold_temporal_trends.qmd >}} {{< include 10_survival_temporal_trends.qmd >}} {{< include 11_gcomp_analysis.qmd >}} {{< include 12_export_figures.qmd >}} {{< include 13_export_ppchecks.qmd >}}

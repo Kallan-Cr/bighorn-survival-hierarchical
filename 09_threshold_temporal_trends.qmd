@@ -1,0 +1,201 @@
+# 9. Temporal Trends in Snow Depth Thresholds
+
+## 9.1 Beta-Binomial Models (90 cm & 100 cm)
+
+```{r}
+#| label: trend-snow-calc
+#| echo: true
+#| eval: true
+
+# Model yearly trends in snow day counts (trials = number of days with snow coverage) using a beta-binomial distribution to account for overdispersion and zero.
+# 1. 90 cm threshold
+beta_90 <- brm(
+  bf(days_gt_90 | trials(days_count) ~ Year_trend),  
+  data = snow,
+  family = beta_binomial(),
+  chains = 4, iter = 6000, warmup = 2000,
+  cores = 4, seed = 123, backend = "cmdstanr"
+)
+
+# 2. 100 cm threshold
+beta_100 <- brm(
+  bf(days_gt_100 | trials(days_count) ~ Year_trend),  
+  data = snow,
+  family = beta_binomial(),
+  chains = 4, iter = 6000, warmup = 2000,
+  cores = 4, seed = 123, backend = "cmdstanr"
+)
+```
+
+```{r}
+#| label: trend-snow-results
+#| echo: true
+#| eval: true
+
+# Diagnostics: 90 cm Model 
+pp_check(beta_90, type = "stat", stat = "mean")
+pp_check(beta_90, type = "stat", stat = "sd")
+pp_check(beta_90, type = "stat", stat = function(y) mean(y == 0))
+pp_check(beta_90, type = "ecdf_overlay", ndraws = 50)
+
+trend_90_powerscale <- powerscale_sensitivity(beta_90)
+summary(beta_90)
+p_direction(beta_90)
+
+ft_beta90 <- flextable(extract_brms_summary(beta_90, "90")) |> autofit()
+doc <- read_docx()       
+doc <- body_add_flextable(doc, ft_beta90)   
+print(doc, target = "beta90.docx")
+
+# Diagnostics: 100 cm Model
+pp_check(beta_100, type = "stat", stat = "mean")
+pp_check(beta_100, type = "stat", stat = "sd")
+pp_check(beta_100, type = "stat", stat = function(y) mean(y == 0), bins = 30)
+pp_check(beta_100, type = "ecdf_overlay", ndraws = 50)
+
+trend_100_powerscale <- powerscale_sensitivity(beta_100)
+summary(beta_100) 
+p_direction(beta_100)
+
+ft_beta100 <- flextable(extract_brms_summary(beta_100, "100")) |> autofit()
+doc <- read_docx()       
+doc <- body_add_flextable(doc, ft_beta100)   
+print(doc, target = "beta100.docx")
+```
+
+## 9.2 Graphical Visualization of Snow Threshold Trends
+
+```{r}
+#| label: trend-snow-plots
+#| echo: true
+#| eval: true
+
+# Setup time horizon for simulations (1979 to 2023)
+Year_trend_seq <- seq(from = 0, to = 44, by = 1) 
+n_Year <- length(Year_trend_seq)
+
+# 1. 90 cm Threshold: Simulation and occurrence probability
+
+draws_90 <- as_draws_df(beta_90)
+n_sims_90 <- nrow(draws_90)
+
+prob_matrix_90 <- matrix(NA, nrow = n_sims_90, ncol = n_Year)
+
+for (i in 1:n_sims_90) {
+  eta <- draws_90$b_Intercept[i] + draws_90$b_Year_trend[i] * Year_trend_seq
+  mu_i <- plogis(eta)
+  prob_zero <- dbeta_binomial(x = 0, size = 365, mu = mu_i, phi = draws_90$phi[i])
+  prob_matrix_90[i, ] <- 1 - prob_zero
+}
+
+prob_mean_90 <- apply(prob_matrix_90, MARGIN = 2, FUN = mean)
+ci_lower_90  <- apply(prob_matrix_90, MARGIN = 2, FUN = quantile, probs = 0.025)
+ci_upper_90  <- apply(prob_matrix_90, MARGIN = 2, FUN = quantile, probs = 0.975)
+
+snow$binary_gt_90 <- ifelse(snow$days_gt_90 > 0, 1, 0)
+
+df_plot_90 <- data.frame(
+  Year_trend = Year_trend_seq,
+  prob_mean   = prob_mean_90,
+  ci_lower    = ci_lower_90,
+  ci_upper    = ci_upper_90
+)
+
+prob_90 <- ggplot(df_plot_90, aes(x = Year_trend)) +
+  geom_ribbon(aes(ymin = ci_lower, ymax = ci_upper), fill = "#4575b4", alpha = 0.2) +
+  geom_line(aes(y = prob_mean), color = "#4575b4", linewidth = 1) +
+  geom_point(data = snow, aes(x = Year_trend, y = binary_gt_90), alpha = 0.6, size = 2, color = "black") +
+  scale_y_continuous(limits = c(0, 1)) +
+  scale_x_continuous(
+    breaks = seq(0, 44, by = 10), 
+    labels = seq(1979, 2024, by = 10),
+    limits = c(0, 44)
+  ) +
+  labs(
+    x = "Year",
+    y = "Probability of at least one day ≥ 90cm"
+  ) +
+  theme_pubr() +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5, size = 14),
+    axis.title = element_text(size = 11)
+  )
+
+# Conditional count curve for 90 cm
+ce_90 <- conditional_effects(beta_90, effects = "Year_trend")
+ce_90 <- ce_90$Year_trend
+
+plot_ce90 <- ggplot(ce_90, aes(x = Year_trend, y = estimate__)) +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__), fill = "#4575b4", alpha = 0.2) +
+  geom_line(color = "#4575b4", linewidth = 1.5) +
+  geom_point(data = snow, aes(x = Year_trend, y = days_gt_90), alpha = 0.6, size = 2, color = "black") +
+  labs(x = "Year", y = "Number of days ≥ 90cm") +
+  scale_x_continuous(
+    breaks = seq(0, 44, by = 10), 
+    labels = seq(1979, 2024, by = 10),
+    limits = c(0, 44)
+  ) +
+  theme_pubr()
+
+# 2. 100 cm Threshold: Simulation and occurrence probability
+draws_100 <- as_draws_df(beta_100)
+n_sims_100 <- nrow(draws_100)
+
+prob_matrix_100 <- matrix(NA, nrow = n_sims_100, ncol = n_Year)
+
+for (i in 1:n_sims_100) {
+  eta_100 <- draws_100$b_Intercept[i] + draws_100$b_Year_trend[i] * Year_trend_seq
+  mu_i_100 <- plogis(eta_100)
+  prob_zero_100 <- dbeta_binomial(x = 0, size = 365, mu = mu_i_100, phi = draws_100$phi[i])
+  prob_matrix_100[i, ] <- 1 - prob_zero_100
+}
+
+prob_mean_100 <- apply(prob_matrix_100, MARGIN = 2, FUN = mean)
+ci_lower_100  <- apply(prob_matrix_100, MARGIN = 2, FUN = quantile, probs = 0.025)
+ci_upper_100  <- apply(prob_matrix_100, MARGIN = 2, FUN = quantile, probs = 0.975)
+
+snow$binary_gt_100 <- ifelse(snow$days_gt_100 > 0, 1, 0)
+
+df_plot_100 <- data.frame(
+  Year_trend = Year_trend_seq,
+  prob_mean   = prob_mean_100,
+  ci_lower    = ci_lower_100,
+  ci_upper    = ci_upper_100
+)
+
+prob_100 <- ggplot(df_plot_100, aes(x = Year_trend)) +
+  geom_ribbon(aes(ymin = ci_lower, ymax = ci_upper), fill = "#4575b4", alpha = 0.2) +
+  geom_line(aes(y = prob_mean), color = "#4575b4", linewidth = 1) +
+  geom_point(data = snow, aes(x = Year_trend, y = binary_gt_100), alpha = 0.6, size = 2, color = "black") +
+  scale_y_continuous(limits = c(0, 1)) +
+  scale_x_continuous(
+    breaks = seq(0, 44, by = 10), 
+    labels = seq(1979, 2024, by = 10),
+    limits = c(0, 44)
+  ) +
+  labs(
+    x = "Year",
+    y = "Probability of at least one day ≥ 100cm"
+  ) +
+  theme_pubr() +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5, size = 14),
+    axis.title = element_text(size = 11)
+  )
+
+# Conditional count curve for 100 cm
+ce_100 <- conditional_effects(beta_100, effects = "Year_trend")
+ce_100 <- ce_100$Year_trend
+
+plot_ce100 <- ggplot(ce_100, aes(x = Year_trend, y = estimate__)) +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__), fill = "#4575b4", alpha = 0.2) +
+  geom_line(color = "#4575b4", linewidth = 1.5) +
+  geom_point(data = snow, aes(x = Year_trend, y = days_gt_100), alpha = 0.6, size = 2, color = "black") +
+  scale_x_continuous(
+    breaks = seq(0, 44, by = 10), 
+    labels = seq(1979, 2024, by = 10),
+    limits = c(0, 44)
+  ) +
+  labs(x = "Year", y = "Number of days ≥ 100cm") +
+  theme_pubr()
+```

@@ -1,0 +1,39 @@
+MIT License
+
+Copyright (c) 2026 Kallan Cremel
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+Data and Documentation License:
+The data files (`Data_hashed.csv`, `season_summary_thresh.csv`), figures (`figure/`), and
+documentation (including `README.md` and the rendered outputs of `main.qmd`) in this
+repository are licensed under the Creative Commons Attribution 4.0 International License
+(CC BY 4.0): https://creativecommons.org/licenses/by/4.0/
+
+---
+
+Third-Party Dependencies:
+This project depends on third-party R packages (see `renv.lock`), several of which are
+distributed under the GNU General Public License (e.g. `rstan`, `brms`, `loo`, `ggdist`,
+`tidybayes`, `performance`, `bayestestR`, `marginaleffects`). These dependencies are not
+redistributed as part of this repository; they are installed separately via `renv::restore()`
+and remain governed by their own respective licenses. No third-party package source code is
+included or modified in this repository.

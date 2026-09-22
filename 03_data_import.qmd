@@ -1,0 +1,109 @@
+# 3. Data Import & Preparation
+
+```{r}
+#| label: data-import
+#| echo: true
+#| eval: false
+
+# --- Import Raw Data ---
+Data <- read.csv("Data_hashed.csv", header = TRUE)
+
+# Snow metrics: seasonal averages, duration, density, and threshold counts
+snow <- read.csv("season_summary_thresh.csv", header = TRUE) |>
+  mutate(
+    Year_trend = Yr - 1979
+  )
+
+# --- Snow Metrics Collinearity ---
+# Check correlation matrix among seasonal snow variables
+snow_cor <- snow |> 
+  dplyr::select(-season, -Yr, -Year_trend) |> 
+  cor(use = "pairwise.complete.obs")
+
+round(snow_cor, 2)
+
+corrplot::corrplot(
+  snow_cor, 
+  method = "circle", 
+  type = "upper", 
+  tl.col = "black", 
+  tl.srt = 45, 
+  addCoef.col = "black", 
+  number.cex = 0.7
+)
+
+# --- Merging & Cleaning ---
+Data <- Data |>
+  left_join(snow, by = "Yr") |>
+  mutate(
+    wtd114 = as.numeric(wtd114),
+    Yr = as.factor(Yr)
+  )
+
+# --- Splitting Groups (Unscaled) ---
+# Filter complete cases for all covariates used across models
+Data_lambs_uns <- Data |> 
+  filter(Age == 0) |>
+  filter(
+    !is.na(wtd114),
+    !is.na(pop_den),
+    !is.na(avg_snow_depth),
+    !is.na(days_count),
+    !is.na(median_density),
+    !is.na(Sex),
+    !is.na(Survival)
+  )
+
+Data_females_uns <- Data |> 
+  filter(Age >= 1, Sex == "Female") |>
+  filter(
+    !is.na(wtd114),
+    !is.na(pop_den),
+    !is.na(avg_snow_depth),
+    !is.na(days_count),
+    !is.na(median_density),
+    !is.na(Age),
+    !is.na(Survival)
+  )
+
+Data_males_uns <- Data |> 
+  filter(Age >= 1, Sex == "Male") |>
+  filter(
+    !is.na(wtd114),
+    !is.na(pop_den),
+    !is.na(avg_snow_depth),
+    !is.na(days_count),
+    !is.na(median_density),
+    !is.na(Age),
+    !is.na(Survival)
+  )
+
+# --- Standardize Predictors (z-scores) ---
+
+# 1. Lambs Scaled
+Data_lamb_scaled <- Data_lambs_uns |>
+  mutate(across(
+    .cols = c(wtd114, pop_den, avg_snow_depth, days_count, median_density, 
+              days_gt_10, days_gt_20, days_gt_30, days_gt_40, days_gt_50, 
+              days_gt_60, days_gt_70, days_gt_80, days_gt_90, days_gt_100),
+    .fns = ~ scale(.)[, 1]
+  ))
+
+# 2. Females Scaled
+Data_female_scaled <- Data_females_uns |>
+  mutate(across(
+    .cols = c(Age, wtd114, pop_den, avg_snow_depth, days_count, median_density, 
+              days_gt_10, days_gt_20, days_gt_30, days_gt_40, days_gt_50, 
+              days_gt_60, days_gt_70, days_gt_80, days_gt_90, days_gt_100),
+    .fns = ~ scale(.)[, 1]
+  ))
+
+# 3. Males Scaled
+Data_male_scaled <- Data_males_uns |>
+  mutate(across(
+    .cols = c(Age, wtd114, pop_den, avg_snow_depth, days_count, median_density, 
+              days_gt_10, days_gt_20, days_gt_30, days_gt_40, days_gt_50, 
+              days_gt_60, days_gt_70, days_gt_80, days_gt_90, days_gt_100),
+    .fns = ~ scale(.)[, 1]
+  ))
+```

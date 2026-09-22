@@ -1,0 +1,81 @@
+# 4. Preliminary Analysis: Age Modeling
+
+```{r}
+#| label: prelim-models-calc
+#| echo: true
+#| eval: true
+
+# Compare linear, quadratic, and natural cubic spline age terms
+# to select the most appropriate functional form 
+
+# --- Females ---
+m_fem_lin <- brm(
+  Survival ~ Age + (1 | Yr), 
+  data = Data_female_scaled, 
+  family = bernoulli(link = "logit"), 
+  cores = 4, chains = 4, warmup = 2000, iter = 6000, 
+  threads = threading(2), backend = "cmdstanr", seed = 1955807312
+)
+
+m_fem_quad <- brm(
+  Survival ~ Age + I(Age^2) + (1 | Yr), 
+  data = Data_female_scaled, 
+  family = bernoulli(link = "logit"), 
+  cores = 4, chains = 4, warmup = 2000, iter = 6000, 
+  threads = threading(2), backend = "cmdstanr", seed = 1742327535
+)
+
+m_fem_spl <- brm(
+  Survival ~ ns(Age, 3) + (1 | Yr), 
+  data = Data_female_scaled, 
+  family = bernoulli(link = "logit"), 
+  cores = 4, chains = 4, warmup = 2000, iter = 6000, 
+  threads = threading(2), backend = "cmdstanr", seed = 1088916962
+)
+
+# --- Males ---
+m_mal_lin <- brm(
+  Survival ~ Age + (1 | Yr), 
+  data = Data_male_scaled, 
+  family = bernoulli(link = "logit"), 
+  cores = 4, chains = 4, warmup = 2000, iter = 6000, 
+  threads = threading(2), backend = "cmdstanr", seed = 834896509
+)
+
+m_mal_quad <- brm(
+  Survival ~ Age + I(Age^2) + (1 | Yr), 
+  data = Data_male_scaled, 
+  family = bernoulli(link = "logit"), 
+  cores = 4, chains = 4, warmup = 2000, iter = 6000, 
+  threads = threading(2), backend = "cmdstanr", seed = 551577029
+)
+
+m_mal_spl <- brm(
+  Survival ~ ns(Age, 3) + (1 | Yr), 
+  data = Data_male_scaled, 
+  family = bernoulli(link = "logit"), 
+  cores = 4, chains = 4, warmup = 2000, iter = 6000, 
+  threads = threading(2), backend = "cmdstanr", seed = 1586254377
+)
+```
+
+```{r}
+#| label: prelim-results
+#| echo: true
+#| eval: true
+
+# Compare out-of-sample predictive accuracy using LOO-CV
+# --- Results: Females ---
+m_fem_lin_loo  <- loo(m_fem_lin, cores = 4)
+m_fem_quad_loo <- loo(m_fem_quad, cores = 4)
+m_fem_spl_loo  <- loo(m_fem_spl, cores = 4)
+
+loo_compare(m_fem_lin_loo, m_fem_quad_loo, m_fem_spl_loo)
+
+# --- Results: Males ---
+m_mal_lin_loo  <- loo(m_mal_lin)
+m_mal_quad_loo <- loo(m_mal_quad)
+m_mal_spl_loo  <- loo(m_mal_spl)
+
+loo_compare(m_mal_lin_loo, m_mal_quad_loo, m_mal_spl_loo)
+```
