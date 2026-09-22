@@ -104,7 +104,7 @@ Individual annual survival is modeled using Bayesian mixed-effects logistic regr
 Long-term temporal trends in snow depth threshold (days exceeding 90 cm and 100 cm) are modeled using beta-binomial regression
    
 3. **Model selection and validation**:
-Approximate leave-one-out cross-validation (`loo` package) and Pareto-$k$ diagnostic checks ($k < 0.7$).
+Approximate leave-one-out cross-validation (`loo` package) and Pareto k diagnostic checks ($k < 0.7$).
 Posterior predictive checks with grouped bars, means, standard deviations, and zero proportions.
 Prior sensitivity diagnostics (`priorsense` power-scaling).
 
