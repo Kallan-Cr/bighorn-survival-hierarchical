@@ -17,7 +17,7 @@ library(lubridate)       # >= 1.9.4
 library(stringr)         # >= 1.5.1
 
 # Statistics & Modeling
-library(brms)            # >= 2.22.0
+library(brms)            # >= 2.23.0
 library(rstan)           # >= 2.32.7
 library(cmdstanr)        # >= 0.9.0
 library(splines)         # base R
@@ -30,6 +30,7 @@ library(bayestestR)      # >= 0.16.1
 library(priorsense)      # >= 1.2.0
 library(marginaleffects) # >= 0.31.0
 library(posterior)       # >= 1.6.1
+library(extraDistr)      # >= 1.10.0
 
 # Visualization
 library(ggplot2)         # >= 4.0.1

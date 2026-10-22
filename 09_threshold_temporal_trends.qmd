@@ -122,7 +122,8 @@ prob_90 <- ggplot(df_plot_90, aes(x = Year_trend)) +
   )
 
 # Conditional count curve for 90 cm
-ce_90 <- conditional_effects(beta_90, effects = "Year_trend")
+cond_df <- data.frame(days_count = round(mean(snow$days_count)))
+ce_90 <- conditional_effects(beta_90, effects = "Year_trend", conditions = cond_df)
 ce_90 <- ce_90$Year_trend
 
 plot_ce90 <- ggplot(ce_90, aes(x = Year_trend, y = estimate__)) +
@@ -184,7 +185,7 @@ prob_100 <- ggplot(df_plot_100, aes(x = Year_trend)) +
   )
 
 # Conditional count curve for 100 cm
-ce_100 <- conditional_effects(beta_100, effects = "Year_trend")
+ce_100 <- conditional_effects(beta_100, effects = "Year_trend", conditions = cond_df)
 ce_100 <- ce_100$Year_trend
 
 plot_ce100 <- ggplot(ce_100, aes(x = Year_trend, y = estimate__)) +

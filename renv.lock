@@ -92,6 +92,31 @@
       "Maintainer": "Achim Zeileis <Achim.Zeileis@R-project.org>",
       "Repository": "CRAN"
     },
+    "KernSmooth": {
+      "Package": "KernSmooth",
+      "Version": "2.23-26",
+      "Source": "Repository",
+      "Priority": "recommended",
+      "Date": "2024-12-10",
+      "Title": "Functions for Kernel Smoothing Supporting Wand & Jones (1995)",
+      "Authors@R": "c(person(\"Matt\", \"Wand\", role = \"aut\", email = \"Matt.Wand@uts.edu.au\"), person(\"Cleve\", \"Moler\", role = \"ctb\", comment = \"LINPACK routines in src/d*\"), person(\"Brian\", \"Ripley\", role = c(\"trl\", \"cre\", \"ctb\"), email = \"Brian.Ripley@R-project.org\", comment = \"R port and updates\"))",
+      "Note": "Maintainers are not available to give advice on using a package they did not author.",
+      "Depends": [
+        "R (>= 2.5.0)",
+        "stats"
+      ],
+      "Suggests": [
+        "MASS",
+        "carData"
+      ],
+      "Description": "Functions for kernel smoothing (and density estimation) corresponding to the book:  Wand, M.P. and Jones, M.C. (1995) \"Kernel Smoothing\".",
+      "License": "Unlimited",
+      "ByteCompile": "yes",
+      "NeedsCompilation": "yes",
+      "Author": "Matt Wand [aut], Cleve Moler [ctb] (LINPACK routines in src/d*), Brian Ripley [trl, cre, ctb] (R port and updates)",
+      "Maintainer": "Brian Ripley <Brian.Ripley@R-project.org>",
+      "Repository": "CRAN"
+    },
     "MASS": {
       "Package": "MASS",
       "Version": "7.3-65",
@@ -273,12 +298,15 @@
     },
     "Rcpp": {
       "Package": "Rcpp",
-      "Version": "1.1.0",
+      "Version": "1.1.2",
       "Source": "Repository",
       "Title": "Seamless R and C++ Integration",
-      "Date": "2025-07-01",
+      "Date": "2026-07-01",
       "Authors@R": "c(person(\"Dirk\", \"Eddelbuettel\", role = c(\"aut\", \"cre\"), email = \"edd@debian.org\", comment = c(ORCID = \"0000-0001-6419-907X\")), person(\"Romain\", \"Francois\", role = \"aut\", comment = c(ORCID = \"0000-0002-2444-4226\")), person(\"JJ\", \"Allaire\", role = \"aut\", comment = c(ORCID = \"0000-0003-0174-9868\")), person(\"Kevin\", \"Ushey\", role = \"aut\", comment = c(ORCID = \"0000-0003-2880-7407\")), person(\"Qiang\", \"Kou\", role = \"aut\", comment = c(ORCID = \"0000-0001-6786-5453\")), person(\"Nathan\", \"Russell\", role = \"aut\"), person(\"Iñaki\", \"Ucar\", role = \"aut\", comment = c(ORCID = \"0000-0001-6403-5550\")), person(\"Doug\", \"Bates\", role = \"aut\", comment = c(ORCID = \"0000-0001-8316-9503\")), person(\"John\", \"Chambers\", role = \"aut\"))",
       "Description": "The 'Rcpp' package provides R functions as well as C++ classes which offer a seamless integration of R and C++. Many R data types and objects can be mapped back and forth to C++ equivalents which facilitates both writing of new code as well as easier integration of third-party libraries. Documentation about 'Rcpp' is provided by several vignettes included in this package, via the 'Rcpp Gallery' site at <https://gallery.rcpp.org>, the paper by Eddelbuettel and Francois (2011, <doi:10.18637/jss.v040.i08>), the book by Eddelbuettel (2013, <doi:10.1007/978-1-4614-6868-4>) and the paper by Eddelbuettel and Balamuta (2018, <doi:10.1080/00031305.2017.1375990>); see 'citation(\"Rcpp\")' for details.",
+      "Depends": [
+        "R (>= 3.5.0)"
+      ],
       "Imports": [
         "methods",
         "utils"
@@ -292,11 +320,51 @@
       "URL": "https://www.rcpp.org, https://dirk.eddelbuettel.com/code/rcpp.html, https://github.com/RcppCore/Rcpp",
       "License": "GPL (>= 2)",
       "BugReports": "https://github.com/RcppCore/Rcpp/issues",
-      "MailingList": "rcpp-devel@lists.r-forge.r-project.org",
       "RoxygenNote": "6.1.1",
       "Encoding": "UTF-8",
+      "VignetteBuilder": "Rcpp",
       "NeedsCompilation": "yes",
       "Author": "Dirk Eddelbuettel [aut, cre] (ORCID: <https://orcid.org/0000-0001-6419-907X>), Romain Francois [aut] (ORCID: <https://orcid.org/0000-0002-2444-4226>), JJ Allaire [aut] (ORCID: <https://orcid.org/0000-0003-0174-9868>), Kevin Ushey [aut] (ORCID: <https://orcid.org/0000-0003-2880-7407>), Qiang Kou [aut] (ORCID: <https://orcid.org/0000-0001-6786-5453>), Nathan Russell [aut], Iñaki Ucar [aut] (ORCID: <https://orcid.org/0000-0001-6403-5550>), Doug Bates [aut] (ORCID: <https://orcid.org/0000-0001-8316-9503>), John Chambers [aut]",
+      "Maintainer": "Dirk Eddelbuettel <edd@debian.org>",
+      "Repository": "CRAN"
+    },
+    "RcppArmadillo": {
+      "Package": "RcppArmadillo",
+      "Version": "15.6.2-1",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "'Rcpp' Integration for the 'Armadillo' Templated Linear Algebra Library",
+      "Date": "2026-10-16",
+      "Authors@R": "c(person(\"Dirk\", \"Eddelbuettel\", role = c(\"aut\", \"cre\"), email = \"edd@debian.org\", comment = c(ORCID = \"0000-0001-6419-907X\")), person(\"Romain\", \"Francois\", role = \"aut\", comment = c(ORCID = \"0000-0002-2444-4226\")), person(\"Doug\", \"Bates\", role = \"aut\", comment = c(ORCID = \"0000-0001-8316-9503\")), person(\"Binxiang\", \"Ni\", role = \"aut\"), person(\"Conrad\", \"Sanderson\", role = \"aut\", comment = c(ORCID = \"0000-0002-0049-4501\")))",
+      "Description": "'Armadillo' is a templated C++ linear algebra library aiming towards a good balance between speed and ease of use. It provides high-level syntax and functionality deliberately similar to Matlab. It is useful for algorithm development directly in C++, or quick conversion of research code into production environments. It provides efficient classes for vectors, matrices and cubes where dense and sparse matrices are supported. Integer, floating point and complex numbers are supported. A sophisticated expression evaluator (based on template meta-programming) automatically combines several operations to increase speed and efficiency. Dynamic evaluation automatically chooses optimal code paths based on detected matrix structures. Matrix decompositions are provided through integration with LAPACK, or one of its high performance drop-in replacements (such as 'MKL' or 'OpenBLAS'). It can automatically use 'OpenMP' multi-threading (parallelisation) to speed up computationally expensive operations. . The 'RcppArmadillo' package includes the header files from the 'Armadillo' library; users do not need to install 'Armadillo' itself in order to use 'RcppArmadillo'. Starting from release 15.0.0, the minimum compilation standard is C++14. . Since release 7.800.0, 'Armadillo' is licensed under Apache License 2; previous releases were under licensed as MPL 2.0 from version 3.800.0 onwards and LGPL-3 prior to that; 'RcppArmadillo' (the 'Rcpp' bindings/bridge to Armadillo) is licensed under the GNU GPL version 2 or later, as is the rest of 'Rcpp'.",
+      "License": "GPL (>= 2)",
+      "LazyLoad": "yes",
+      "Depends": [
+        "R (>= 3.3.0)"
+      ],
+      "LinkingTo": [
+        "Rcpp"
+      ],
+      "Imports": [
+        "Rcpp (>= 1.1.1)",
+        "stats",
+        "utils",
+        "methods"
+      ],
+      "Suggests": [
+        "tinytest",
+        "Matrix (>= 1.3.0)",
+        "pkgKitten",
+        "reticulate",
+        "slam"
+      ],
+      "URL": "https://github.com/RcppCore/RcppArmadillo, https://dirk.eddelbuettel.com/code/rcpp.armadillo.html",
+      "BugReports": "https://github.com/RcppCore/RcppArmadillo/issues",
+      "RoxygenNote": "6.0.1",
+      "Encoding": "UTF-8",
+      "VignetteBuilder": "Rcpp",
+      "NeedsCompilation": "yes",
+      "Author": "Dirk Eddelbuettel [aut, cre] (ORCID: <https://orcid.org/0000-0001-6419-907X>), Romain Francois [aut] (ORCID: <https://orcid.org/0000-0002-2444-4226>), Doug Bates [aut] (ORCID: <https://orcid.org/0000-0001-8316-9503>), Binxiang Ni [aut], Conrad Sanderson [aut] (ORCID: <https://orcid.org/0000-0002-0049-4501>)",
       "Maintainer": "Dirk Eddelbuettel <edd@debian.org>",
       "Repository": "CRAN"
     },
@@ -827,13 +895,13 @@
     },
     "brms": {
       "Package": "brms",
-      "Version": "2.22.0",
+      "Version": "2.23.0",
       "Source": "Repository",
       "Encoding": "UTF-8",
       "Type": "Package",
       "Title": "Bayesian Regression Models using 'Stan'",
-      "Date": "2024-09-20",
-      "Authors@R": "c(person(\"Paul-Christian\", \"Bürkner\", email = \"paul.buerkner@gmail.com\", role = c(\"aut\", \"cre\")), person(\"Jonah\", \"Gabry\", role = c(\"ctb\")), person(\"Sebastian\", \"Weber\", role = c(\"ctb\")), person(\"Andrew\", \"Johnson\", role = c(\"ctb\")), person(\"Martin\", \"Modrak\", role = c(\"ctb\")), person(\"Hamada S.\", \"Badr\", role = c(\"ctb\")), person(\"Frank\", \"Weber\", role = c(\"ctb\")), person(\"Aki\", \"Vehtari\", role = c(\"ctb\")), person(\"Mattan S.\", \"Ben-Shachar\", role = c(\"ctb\")), person(\"Hayden\", \"Rabel\", role = c(\"ctb\")), person(\"Simon C.\", \"Mills\", role = c(\"ctb\")), person(\"Stephen\", \"Wild\", role = c(\"ctb\")), person(\"Ven\", \"Popov\", role = c(\"ctb\")))",
+      "Date": "2025-09-08",
+      "Authors@R": "c(person(\"Paul-Christian\", \"Bürkner\", email = \"paul.buerkner@gmail.com\", role = c(\"aut\", \"cre\")), person(\"Jonah\", \"Gabry\", role = c(\"ctb\")), person(\"Sebastian\", \"Weber\", role = c(\"ctb\")), person(\"Andrew\", \"Johnson\", role = c(\"ctb\")), person(\"Martin\", \"Modrak\", role = c(\"ctb\")), person(\"Hamada S.\", \"Badr\", role = c(\"ctb\")), person(\"Frank\", \"Weber\", role = c(\"ctb\")), person(\"Aki\", \"Vehtari\", role = c(\"ctb\")), person(\"Mattan S.\", \"Ben-Shachar\", role = c(\"ctb\")), person(\"Hayden\", \"Rabel\", role = c(\"ctb\")), person(\"Simon C.\", \"Mills\", role = c(\"ctb\")), person(\"Stephen\", \"Wild\", role = c(\"ctb\")), person(\"Ven\", \"Popov\", role = c(\"ctb\")), person(\"Ioannis\", \"Kosmidis\", role = c(\"ctb\")), person(\"Ben\", \"Schneider\", role = c(\"ctb\")), person(\"Noa\", \"Kallioinen\", role = c(\"ctb\")), person(\"Wellington J.\", \"Silva\", role = c(\"ctb\")), person(\"Luiz\", \"Carvalho\", role = c(\"ctb\")), person(\"Sermet\", \"Pekin\", role = c(\"ctb\")))",
       "Depends": [
         "R (>= 3.6.0)",
         "Rcpp (>= 0.12.0)",
@@ -865,7 +933,7 @@
         "backports"
       ],
       "Suggests": [
-        "testthat (>= 0.9.1)",
+        "testthat (>= 3.1.9)",
         "emmeans (>= 1.4.2)",
         "cmdstanr (>= 0.5.0)",
         "projpred (>= 2.0.0)",
@@ -886,11 +954,16 @@
         "statmod",
         "digest",
         "diffobj",
+        "betareg",
         "R.rsp",
         "gtable",
         "shiny",
         "knitr",
-        "rmarkdown"
+        "rmarkdown",
+        "ragg",
+        "colorspace",
+        "mirai",
+        "future.mirai"
       ],
       "Description": "Fit Bayesian generalized (non-)linear multivariate multilevel models using 'Stan' for full Bayesian inference. A wide range of distributions and link functions are supported, allowing users to fit -- among others -- linear, robust linear, count data, survival, response times, ordinal, zero-inflated, hurdle, and even self-defined mixture models all in a multilevel context. Further modeling options include both theory-driven and data-driven non-linear terms, auto-correlation structures, censoring and  truncation, meta-analytic standard errors, and quite a few more.  In addition, all parameters of the response distribution can be predicted  in order to perform distributional regression. Prior specifications are  flexible and explicitly encourage users to apply prior distributions that actually reflect their prior knowledge. Models can easily be evaluated and compared using several methods assessing posterior or prior predictions.  References: Bürkner (2017) <doi:10.18637/jss.v080.i01>;  Bürkner (2018) <doi:10.32614/RJ-2018-017>; Bürkner (2021) <doi:10.18637/jss.v100.i05>; Carpenter et al. (2017) <doi:10.18637/jss.v076.i01>.",
       "LazyData": "true",
@@ -899,9 +972,10 @@
       "URL": "https://github.com/paul-buerkner/brms, https://discourse.mc-stan.org/, https://paulbuerkner.com/brms/",
       "BugReports": "https://github.com/paul-buerkner/brms/issues",
       "Additional_repositories": "https://stan-dev.r-universe.dev/",
+      "SystemRequirements": "pngquant",
       "VignetteBuilder": "knitr, R.rsp",
       "RoxygenNote": "7.3.2",
-      "Author": "Paul-Christian Bürkner [aut, cre], Jonah Gabry [ctb], Sebastian Weber [ctb], Andrew Johnson [ctb], Martin Modrak [ctb], Hamada S. Badr [ctb], Frank Weber [ctb], Aki Vehtari [ctb], Mattan S. Ben-Shachar [ctb], Hayden Rabel [ctb], Simon C. Mills [ctb], Stephen Wild [ctb], Ven Popov [ctb]",
+      "Author": "Paul-Christian Bürkner [aut, cre], Jonah Gabry [ctb], Sebastian Weber [ctb], Andrew Johnson [ctb], Martin Modrak [ctb], Hamada S. Badr [ctb], Frank Weber [ctb], Aki Vehtari [ctb], Mattan S. Ben-Shachar [ctb], Hayden Rabel [ctb], Simon C. Mills [ctb], Stephen Wild [ctb], Ven Popov [ctb], Ioannis Kosmidis [ctb], Ben Schneider [ctb], Noa Kallioinen [ctb], Wellington J. Silva [ctb], Luiz Carvalho [ctb], Sermet Pekin [ctb]",
       "Maintainer": "Paul-Christian Bürkner <paul.buerkner@gmail.com>",
       "Repository": "CRAN"
     },
@@ -1276,6 +1350,31 @@
       "Maintainer": "Michel Lang <michellang@gmail.com>",
       "Repository": "CRAN"
     },
+    "class": {
+      "Package": "class",
+      "Version": "7.3-23",
+      "Source": "Repository",
+      "Priority": "recommended",
+      "Date": "2025-01-01",
+      "Depends": [
+        "R (>= 3.0.0)",
+        "stats",
+        "utils"
+      ],
+      "Imports": [
+        "MASS"
+      ],
+      "Authors@R": "c(person(\"Brian\", \"Ripley\", role = c(\"aut\", \"cre\", \"cph\"), email = \"Brian.Ripley@R-project.org\"), person(\"William\", \"Venables\", role = \"cph\"))",
+      "Description": "Various functions for classification, including k-nearest neighbour, Learning Vector Quantization and Self-Organizing Maps.",
+      "Title": "Functions for Classification",
+      "ByteCompile": "yes",
+      "License": "GPL-2 | GPL-3",
+      "URL": "http://www.stats.ox.ac.uk/pub/MASS4/",
+      "NeedsCompilation": "yes",
+      "Author": "Brian Ripley [aut, cre, cph], William Venables [cph]",
+      "Maintainer": "Brian Ripley <Brian.Ripley@R-project.org>",
+      "Repository": "CRAN"
+    },
     "cli": {
       "Package": "cli",
       "Version": "3.6.5",
@@ -1321,6 +1420,48 @@
       "NeedsCompilation": "yes",
       "Author": "Gábor Csárdi [aut, cre], Hadley Wickham [ctb], Kirill Müller [ctb], Salim Brüggemann [ctb] (<https://orcid.org/0000-0002-5329-5987>), Posit Software, PBC [cph, fnd]",
       "Maintainer": "Gábor Csárdi <gabor@posit.co>",
+      "Repository": "CRAN"
+    },
+    "cluster": {
+      "Package": "cluster",
+      "Version": "2.1.8.1",
+      "Source": "Repository",
+      "VersionNote": "Last CRAN: 2.1.8 on 2024-12-10; 2.1.7 on 2024-12-06; 2.1.6 on 2023-11-30; 2.1.5 on 2023-11-27",
+      "Date": "2025-03-11",
+      "Priority": "recommended",
+      "Title": "\"Finding Groups in Data\": Cluster Analysis Extended Rousseeuw et al.",
+      "Description": "Methods for Cluster analysis.  Much extended the original from Peter Rousseeuw, Anja Struyf and Mia Hubert, based on Kaufman and Rousseeuw (1990) \"Finding Groups in Data\".",
+      "Maintainer": "Martin Maechler <maechler@stat.math.ethz.ch>",
+      "Authors@R": "c(person(\"Martin\",\"Maechler\", role = c(\"aut\",\"cre\"), email=\"maechler@stat.math.ethz.ch\", comment = c(ORCID = \"0000-0002-8685-9910\")) ,person(\"Peter\", \"Rousseeuw\", role=\"aut\", email=\"peter.rousseeuw@kuleuven.be\", comment = c(\"Fortran original\", ORCID = \"0000-0002-3807-5353\")) ,person(\"Anja\", \"Struyf\", role=\"aut\", comment= \"S original\") ,person(\"Mia\", \"Hubert\", role=\"aut\", email= \"Mia.Hubert@uia.ua.ac.be\", comment = c(\"S original\", ORCID = \"0000-0001-6398-4850\")) ,person(\"Kurt\", \"Hornik\", role=c(\"trl\", \"ctb\"), email=\"Kurt.Hornik@R-project.org\", comment=c(\"port to R; maintenance(1999-2000)\", ORCID=\"0000-0003-4198-9911\")) ,person(\"Matthias\", \"Studer\", role=\"ctb\") ,person(\"Pierre\", \"Roudier\", role=\"ctb\") ,person(\"Juan\",   \"Gonzalez\", role=\"ctb\") ,person(\"Kamil\",  \"Kozlowski\", role=\"ctb\") ,person(\"Erich\",  \"Schubert\", role=\"ctb\", comment = c(\"fastpam options for pam()\", ORCID = \"0000-0001-9143-4880\")) ,person(\"Keefe\",  \"Murphy\", role=\"ctb\", comment = \"volume.ellipsoid({d >= 3})\") #not yet ,person(\"Fischer-Rasmussen\", \"Kasper\", role = \"ctb\", comment = \"Gower distance for CLARA\") )",
+      "Depends": [
+        "R (>= 3.5.0)"
+      ],
+      "Imports": [
+        "graphics",
+        "grDevices",
+        "stats",
+        "utils"
+      ],
+      "Suggests": [
+        "MASS",
+        "Matrix"
+      ],
+      "SuggestsNote": "MASS: two examples using cov.rob() and mvrnorm(); Matrix tools for testing",
+      "Enhances": [
+        "mvoutlier",
+        "fpc",
+        "ellipse",
+        "sfsmisc"
+      ],
+      "EnhancesNote": "xref-ed in man/*.Rd",
+      "LazyLoad": "yes",
+      "LazyData": "yes",
+      "ByteCompile": "yes",
+      "BuildResaveData": "no",
+      "License": "GPL (>= 2)",
+      "URL": "https://svn.r-project.org/R-packages/trunk/cluster/",
+      "NeedsCompilation": "yes",
+      "Author": "Martin Maechler [aut, cre] (<https://orcid.org/0000-0002-8685-9910>), Peter Rousseeuw [aut] (Fortran original, <https://orcid.org/0000-0002-3807-5353>), Anja Struyf [aut] (S original), Mia Hubert [aut] (S original, <https://orcid.org/0000-0001-6398-4850>), Kurt Hornik [trl, ctb] (port to R; maintenance(1999-2000), <https://orcid.org/0000-0003-4198-9911>), Matthias Studer [ctb], Pierre Roudier [ctb], Juan Gonzalez [ctb], Kamil Kozlowski [ctb], Erich Schubert [ctb] (fastpam options for pam(), <https://orcid.org/0000-0001-9143-4880>), Keefe Murphy [ctb] (volume.ellipsoid({d >= 3}))",
       "Repository": "CRAN"
     },
     "cmdstanr": {
@@ -1988,6 +2129,44 @@
       "NeedsCompilation": "no",
       "Author": "Hadley Wickham [aut, cre], Yihui Xie [aut] (ORCID: <https://orcid.org/0000-0003-0645-5666>), Michael Lawrence [ctb], Thomas Kluyver [ctb], Jeroen Ooms [ctb], Barret Schloerke [ctb], Adam Ryczkowski [ctb], Hiroaki Yutani [ctb], Michel Lang [ctb], Karolis Koncevičius [ctb], Posit Software, PBC [cph, fnd]",
       "Maintainer": "Hadley Wickham <hadley@posit.co>",
+      "Repository": "CRAN"
+    },
+    "extraDistr": {
+      "Package": "extraDistr",
+      "Version": "1.10.0.5",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Additional Univariate and Multivariate Distributions",
+      "Date": "2026-07-13",
+      "Authors@R": "c(person(given  = \"Tymoteusz\", family = \"Wolodzko\", role   = \"aut\", email  = \"twolodzko+extradistr@gmail.com\"), person(given  = \"Sigbert\", family = \"Klinke\", role   = \"cre\", email  = \"sigbert@wiwi.hu-berlin.de\"), person(given  = \"Thomas\", family = \"Farrar\", role   = \"ctb\", email  = \"FarrarT@cput.ac.za\"), person(given  = \"Piero Giovanni Luca\", family = \"Porta-Mana\", role   = \"ctb\", email  = \"\")                     )",
+      "Description": "Density, distribution function, quantile function and random generation for a number of univariate and multivariate distributions. This package implements the following distributions: Bernoulli, beta-binomial, beta-negative binomial, beta prime, Bhattacharjee, Birnbaum-Saunders, bivariate normal, bivariate Poisson, categorical, Dirichlet, Dirichlet-multinomial, discrete gamma, discrete Laplace, discrete normal, discrete uniform, discrete Weibull, Frechet, gamma-Poisson, generalized extreme value, Gompertz, generalized Pareto, Gumbel, half-Cauchy, half-normal, half-t, Huber density, inverse chi-squared, inverse-gamma, Kumaraswamy, Laplace, location-scale t, logarithmic, Lomax, multivariate hypergeometric, multinomial, negative hypergeometric, non-standard beta, normal mixture, Poisson mixture, Pareto, power, reparametrized beta, Rayleigh, shifted Gompertz, Skellam, slash, triangular, truncated binomial, truncated normal, truncated Poisson, Tukey lambda, Wald, zero-inflated binomial, zero-inflated negative binomial, zero-inflated Poisson.",
+      "License": "GPL-2",
+      "URL": "https://github.com/sigbertklinke/extraDistr",
+      "Encoding": "UTF-8",
+      "Depends": [
+        "R (>= 3.1.0)"
+      ],
+      "LinkingTo": [
+        "Rcpp",
+        "RcppArmadillo"
+      ],
+      "Imports": [
+        "Rcpp"
+      ],
+      "Suggests": [
+        "testthat",
+        "LaplacesDemon",
+        "VGAM",
+        "evd",
+        "skellam",
+        "triangle",
+        "actuar"
+      ],
+      "NeedsCompilation": "yes",
+      "Config/roxygen2/version": "8.0.0",
+      "RoxygenNote": "7.3.3",
+      "Author": "Tymoteusz Wolodzko [aut], Sigbert Klinke [cre], Thomas Farrar [ctb], Piero Giovanni Luca Porta-Mana [ctb]",
+      "Maintainer": "Sigbert Klinke <sigbert@wiwi.hu-berlin.de>",
       "Repository": "CRAN"
     },
     "farver": {
@@ -5321,6 +5500,34 @@
       "Maintainer": "Yihui Xie <xie@yihui.name>",
       "Repository": "CRAN"
     },
+    "rpart": {
+      "Package": "rpart",
+      "Version": "4.1.24",
+      "Source": "Repository",
+      "Priority": "recommended",
+      "Date": "2025-01-06",
+      "Authors@R": "c(person(\"Terry\", \"Therneau\", role = \"aut\", email = \"therneau@mayo.edu\"), person(\"Beth\", \"Atkinson\", role = c(\"aut\", \"cre\"), email = \"atkinson@mayo.edu\"), person(\"Brian\", \"Ripley\", role = \"trl\", email = \"ripley@stats.ox.ac.uk\", comment = \"producer of the initial R port, maintainer 1999-2017\"))",
+      "Description": "Recursive partitioning for classification,  regression and survival trees.  An implementation of most of the  functionality of the 1984 book by Breiman, Friedman, Olshen and Stone.",
+      "Title": "Recursive Partitioning and Regression Trees",
+      "Depends": [
+        "R (>= 2.15.0)",
+        "graphics",
+        "stats",
+        "grDevices"
+      ],
+      "Suggests": [
+        "survival"
+      ],
+      "License": "GPL-2 | GPL-3",
+      "LazyData": "yes",
+      "ByteCompile": "yes",
+      "NeedsCompilation": "yes",
+      "Author": "Terry Therneau [aut], Beth Atkinson [aut, cre], Brian Ripley [trl] (producer of the initial R port, maintainer 1999-2017)",
+      "Maintainer": "Beth Atkinson <atkinson@mayo.edu>",
+      "Repository": "CRAN",
+      "URL": "https://github.com/bethatkinson/rpart, https://cran.r-project.org/package=rpart",
+      "BugReports": "https://github.com/bethatkinson/rpart/issues"
+    },
     "rstan": {
       "Package": "rstan",
       "Version": "2.32.7",
@@ -5545,6 +5752,33 @@
       "NeedsCompilation": "no",
       "Author": "Hadley Wickham [aut], Thomas Lin Pedersen [cre, aut] (<https://orcid.org/0000-0002-5147-4711>), Dana Seidel [aut], Posit Software, PBC [cph, fnd] (03wc8by49)",
       "Maintainer": "Thomas Lin Pedersen <thomas.pedersen@posit.co>",
+      "Repository": "CRAN"
+    },
+    "spatial": {
+      "Package": "spatial",
+      "Version": "7.3-18",
+      "Source": "Repository",
+      "Priority": "recommended",
+      "Date": "2025-01-01",
+      "Depends": [
+        "R (>= 3.0.0)",
+        "graphics",
+        "stats",
+        "utils"
+      ],
+      "Suggests": [
+        "MASS"
+      ],
+      "Authors@R": "c(person(\"Brian\", \"Ripley\", role = c(\"aut\", \"cre\", \"cph\"), email = \"Brian.Ripley@R-project.org\"), person(\"Roger\", \"Bivand\", role = \"ctb\"), person(\"William\", \"Venables\", role = \"cph\"))",
+      "Description": "Functions for kriging and point pattern analysis.",
+      "Title": "Functions for Kriging and Point Pattern Analysis",
+      "LazyLoad": "yes",
+      "ByteCompile": "yes",
+      "License": "GPL-2 | GPL-3",
+      "URL": "http://www.stats.ox.ac.uk/pub/MASS4/",
+      "NeedsCompilation": "yes",
+      "Author": "Brian Ripley [aut, cre, cph], Roger Bivand [ctb], William Venables [cph]",
+      "Maintainer": "Brian Ripley <Brian.Ripley@R-project.org>",
       "Repository": "CRAN"
     },
     "stringi": {
